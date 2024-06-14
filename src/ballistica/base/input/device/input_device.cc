@@ -98,4 +98,5 @@ void InputDevice::ResetHeldStates() {}
 
 auto InputDevice::GetPartyButtonName() const -> std::string { return ""; }
 
+void InputDevice::Rumble(float intensity, int duration) {}
 }  // namespace ballistica::base

@@ -56,6 +56,8 @@ JoystickInput::JoystickInput(int sdl_joystick_id,
     sdl_joystick_ = SDL_JoystickOpen(sdl_joystick_id);
     assert(sdl_joystick_);
 
+    sdl_game_controller_ = SDL_GameControllerOpen(sdl_joystick_id);
+
     // In SDL2 we're passed a device-id but that's only used to open the
     // joystick; events and most everything else use an instance ID, so we store
     // that instead.
@@ -84,6 +86,7 @@ JoystickInput::JoystickInput(int sdl_joystick_id,
   } else {
     // Its a manual joystick.
     sdl_joystick_ = nullptr;
+    sdl_game_controller_ = nullptr;
 
     // Hard code a few remote controls.
     // The newer way to do this is just set 'UI-Only' on the device config
@@ -304,6 +307,13 @@ JoystickInput::~JoystickInput() {
     g_base->app_adapter->PushMainThreadCall(
         [joystick] { SDL_JoystickClose(joystick); });
     sdl_joystick_ = nullptr;
+
+    if (sdl_game_controller_) {
+      auto game_controller = sdl_game_controller_;
+      g_base->app_adapter->PushMainThreadCall(
+        [game_controller] { SDL_GameControllerClose(game_controller); });
+      sdl_game_controller_ = nullptr;
+    }
 #else
     Log(LogLevel::kError,
         "sdl_joystick_ set in non-sdl-joystick build destructor.");
@@ -1189,6 +1199,10 @@ void JoystickInput::HandleSDLEvent(const SDL_Event* e) {
       break;
   }
 }  // NOLINT(readability/fn_size) Yes I know this is too long.
+
+void JoystickInput::Rumble(float intensity, int duration) {
+  SDL_GameControllerRumble(sdl_game_controller_, intensity, intensity, duration);
+};
 
 void JoystickInput::UpdateRunningState() {
   if (!AttachedToPlayer()) {

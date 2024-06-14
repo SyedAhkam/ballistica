@@ -54,7 +54,7 @@ void AppAdapterSDL::OnMainThreadStartApp() {
   AppAdapter::OnMainThreadStartApp();
 
   // App is starting. Let's fire up the ol' SDL.
-  uint32_t sdl_flags{SDL_INIT_VIDEO | SDL_INIT_JOYSTICK};
+  uint32_t sdl_flags{SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_HAPTIC};
 
   if (strict_graphics_context_) {
     Log(LogLevel::kWarning,

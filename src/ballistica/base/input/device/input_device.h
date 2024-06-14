@@ -44,6 +44,8 @@ class InputDevice : public Object {
   /// Return the name of the button used to evoke the party menu from UIs.
   virtual auto GetPartyButtonName() const -> std::string;
 
+  virtual auto Rumble(float intensity, int duration) -> void;
+
   /// Returns a number specific to this device type (saying this is the Nth
   /// device of this type).
   auto device_number() const -> int { return number_; }
